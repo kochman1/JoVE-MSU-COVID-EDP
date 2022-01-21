@@ -1,7 +1,7 @@
 # JoVE-MSU-COVID-EDP
 Code for JoVE MSU COVID EDP manuscript.
 
-This code is a Shiny web application. You can run the application by clicking
+The provided code ('SarCovid 2D Thermo Combo Kit2.R') is a Shiny web application. You can run the application by clicking
 the 'Run App' button in R.
 
 Find out more about building applications with Shiny here: http://shiny.rstudio.com/
