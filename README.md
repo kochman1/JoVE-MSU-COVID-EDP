@@ -1,2 +1,2 @@
 # JoVE-MSU-COVID-EDP
-Code for JoVE MSU COVID EDP manuscript
+Code for JoVE MSU COVID EDP manuscript.
