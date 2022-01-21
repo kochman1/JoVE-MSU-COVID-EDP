@@ -1,13 +1,17 @@
 #
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
+#JoVE-MSU-COVID-EDP Shiny App Source Code 
+#Authors: Nathan Kuhn & Joseph Kochmanski
 #
-# Find out more about building applications with Shiny here:
+#This is a Shiny web application. You can run the application by clicking
+# the 'Run App' button in RStudio.
 #
-#    http://shiny.rstudio.com/
+# Find out more about building applications with Shiny here: http://shiny.rstudio.com/
 #
 
-
+#Note: If not installed, install packages using the #'ed install.packages() functions below.
+#install.packages("shiny")
+#install.packages("tidyverse")
+#install.packages("readxl")
 library(shiny)
 library(tidyverse)
 library(readxl)
@@ -84,15 +88,15 @@ server <- function(input, output) {
         req(input$file2)
         req(input$file3)
 
-            #bring in excel files. once file location is know. R scripte can be place there to make pathway easy to write in.
+            #Bring in excel files. Once file location is known, R script can be placed there to make pathway default for read/write.
             Master <- read_excel(input$file1$datapath, sheet = "Master")
             Rows_Index <- read_excel(input$file1$datapath, sheet = "Rows")
             Columns_Index <- read_excel(input$file1$datapath, sheet = "Columns")
             Columns_qPCR <-  read_excel(input$file2$datapath, sheet = "Results", skip = 42)
             Rows_qPCR <-  read_excel(input$file3$datapath, sheet = "Results", skip = 42)
             
-            ##Clean up Rows qpcr data, make calls for posistive based on CT   
-            Clean_Rows_qRCP <- Rows_qPCR %>%
+            ##Clean up Rows qPCR data, make calls for positive based on CT value threshold.
+            Clean_Rows_qPCR <- Rows_qPCR %>%
                 mutate(CT = replace_na(as.numeric(CT), 40)) %>%
                 select("Well Position","Target Name", "Reporter", "CT", "Ct Mean", "Amp Status") %>%
                 pivot_wider(names_from = "Target Name", values_from = c("Reporter", "CT", "Ct Mean", "Amp Status")) %>%
@@ -104,10 +108,10 @@ server <- function(input, output) {
             
             #Merge Rows qPCR data with Rows location data
             Rows_QR <- Rows_Index %>%
-                left_join(Clean_Rows_qRCP, by = "Well Position")
+                left_join(Clean_Rows_qPCR, by = "Well Position")
             
             #Clean up columns qpcr data, make calls for positive based on CT
-            Clean_Columns_qRCP <- Columns_qPCR %>%
+            Clean_Columns_qPCR <- Columns_qPCR %>%
                 mutate(CT = replace_na(as.numeric(CT), 40)) %>%
                 select("Well Position","Target Name", "Reporter", "CT", "Ct Mean", "Amp Status") %>%
                 pivot_wider(names_from = "Target Name", values_from = c("Reporter", "CT", "Ct Mean", "Amp Status")) %>%
@@ -119,7 +123,7 @@ server <- function(input, output) {
             
             #Merge Columns qPCR data with columns location data
             Columns_QR <- Columns_Index %>%
-                left_join(Clean_Columns_qRCP, by = "Well Position")
+                left_join(Clean_Columns_qPCR, by = "Well Position")
            
             #merge rows_qr to master
             Master_Rows_QR <- Master %>%
